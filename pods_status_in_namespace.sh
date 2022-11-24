@@ -1,4 +1,5 @@
 #!/bin/bash
+sleep 30s
 kubectl get pods -n jenkins -o NAME | awk -F "/" '{print $2}' > file.txt
 file='file.txt'
 i=1
