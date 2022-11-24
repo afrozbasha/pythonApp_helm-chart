@@ -9,11 +9,11 @@ echo "pod No.$i $pod -> $status"
 
 case "$status" in
 	#case 1
-	"Status:       Running") helm status nginx --namespace jenkins | grep "STATUS" ;;
+	"Status:       Running") helm status nginx --namespace python-app | grep "STATUS" ;;
 	#case 2
-	"Status:       Pending") helm rollback --namespace jenkins nginx ;;
+	"Status:       Pending") helm rollback --namespace python-app nginx ;;
 	#else
-    *) helm rollback --namespace jenkins nginx ;;
+    *) helm rollback --namespace python-app nginx ;;
 esac
 
 i=$((i+1))
