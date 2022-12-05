@@ -1,0 +1,33 @@
+node('jenkins-slave') {
+
+	stage('clone-code') {
+        sh(script: """
+            git clone https://github.com/afrozbasha/backend_dockerfile.git          
+        """)
+    }
+	stage('build-dockerimage') {
+	    def slackResponse = slackSend(channel: 'devops-automation-tools', message: "Docker Build Started Pipeline Name: ${env.JOB_NAME}, Build No: ${env.BUILD_NUMBER}, Bulid URL: ${env.BUILD_URL}")
+        sh(script: """
+            cd /home/jenkins/agent/workspace/pythonApp-build/backend_dockerfile
+			git clone https://github.com/afrozbasha/new_chatapp.git
+            docker build -t backend .
+        """)
+        slackSend(channel: slackResponse.threadId, message: "Docker Build Completed Status-> ${currentBuild.currentResult} Pipeline Name: ${env.JOB_NAME}, Build No: ${env.BUILD_NUMBER}, Bulid URL: ${env.BUILD_URL}")
+    }
+	withCredentials([string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'PASSWORD')]) {
+        sh 'docker login -u afrozbasha -p $PASSWORD'
+    }
+ 	stage('docker-push') {
+        sh(script: """
+           docker tag backend afrozbasha/backend:lts
+           docker push afrozbasha/backend:lts
+
+        """)
+    } 
+	stage('docker_logout') {
+        sh(script: """
+            docker logout
+        """)
+    }
+
+}

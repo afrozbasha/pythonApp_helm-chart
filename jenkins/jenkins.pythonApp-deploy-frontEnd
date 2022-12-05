@@ -1,0 +1,22 @@
+node('jenkins-slave') {
+
+stage('clone-helm_charts') {
+        sh(script: """
+            git clone https://github.com/afrozbasha/pythonApp_helm-chart.git       
+        """)
+    }
+	stage('start-helm_charts') {
+	    def slackResponse = slackSend(channel: 'devops-automation-tools', message: "Frontend Deployment Started Pipeline Name: ${env.JOB_NAME}, Build No: ${env.BUILD_NUMBER}, Bulid URL: ${env.BUILD_URL}")
+        sh(script: """
+
+			helm upgrade --install frontend pythonApp_helm-chart/frontend --namespace python-app --create-namespace
+			
+			chmod +x pythonApp_helm-chart/appstatus.sh
+			
+			./pythonApp_helm-chart/appstatus.sh python-app frontend
+			
+        """)
+        slackSend(channel: slackResponse.threadId, message: "Frontend Deployment Completed Status-> ${currentBuild.currentResult}, Pipeline Name: ${env.JOB_NAME}, Build No: ${env.BUILD_NUMBER}, Bulid URL: ${env.BUILD_URL}")
+    }
+	
+}
