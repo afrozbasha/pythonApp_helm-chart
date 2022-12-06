@@ -11,7 +11,7 @@ a=0
 test=0
 while [ "$Total_Pods" -ne $a ] && [ $test -lt 4 ]
 do
-        while read pod;
+        while read -r pod;
         do
                 status=$(kubectl describe -n "$1" pod "$pod" | grep "Status:")
                 case "$status" in
@@ -27,7 +27,7 @@ do
         done < $file
 done
 
-while read pod; do
+while read -r pod; do
 status=$(kubectl describe -n "$1" pod "$pod" | grep "Status:")
 echo "pod No.$i $pod -> $status"
 
