@@ -20,7 +20,7 @@ do
                         #case 2
                         "Status:       Terminating") ;;
                         #else
-                        *) echo $status
+                        *) echo "$status"
                         sleep 5
                         test=$((test+1)) ;;
                 esac
